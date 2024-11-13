@@ -431,9 +431,7 @@ public class JSONProcessor {
 		@SuppressWarnings("unchecked")
 		public FieldData(Field field, JSONField annotation) throws JSONProcessorException {
 			field.setAccessible(true);
-			if (field.getType().isPrimitive())
-				fieldValidationException(field, "primitive");
-			else if (Modifier.isStatic(field.getModifiers()))
+			if (Modifier.isStatic(field.getModifiers()))
 				fieldValidationException(field, "static");
 			else if (Modifier.isFinal(field.getModifiers()))
 				fieldValidationException(field, "final");

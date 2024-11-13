@@ -8,13 +8,12 @@ The **JSON Processor** library provides a simple and flexible way to convert Jav
 - Support for nullable fields and custom value mappers.
 - Built-in mappers for common Java types, including:
   - `UUID`
-  - `LocalDate`
-  - `LocalTime`
-  - `LocalDateTime`
-  - `ZonedDateTime`
-  - `OffsetDateTime`
-  - `Instant`
+  - `LocalDate`, `LocalTime`, `LocalDateTime`
+  - `ZonedDateTime`, `OffsetDateTime`, `Instant`
   - `Duration`
+- Build-in mappers for hexadecimal number format conversion:
+  - `Hexadecimal.Integer`
+  - `Hexadecimal.Long`
 
 ## Usage
 
@@ -22,7 +21,7 @@ The **JSON Processor** library provides a simple and flexible way to convert Jav
 
 Use the `@JSONField` annotation to specify how fields should be processed during JSON serialization and deserialization.
 
-**Note**: annotated fields must be non-static, non-final and not of a primitive type.
+**Note**: annotated fields must be non-static and non-final;
 
 ```java
 public class User {

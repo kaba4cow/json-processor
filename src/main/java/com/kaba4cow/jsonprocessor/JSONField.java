@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to mark fields that should be processed during JSON serialization/deserialization. This annotation can only
- * be applied to non-primitive, non-static, and non-final fields.
+ * be applied to non-static, and non-final fields.
  */
 @Retention(RUNTIME)
 @Target(FIELD)

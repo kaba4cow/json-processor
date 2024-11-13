@@ -75,7 +75,7 @@ public interface JSONValueMapper<T, R> {
 	public static class LocalDate implements JSONValueMapper<java.time.LocalDate, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.LocalDate value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.LocalDate value) throws Exception {
 			return value.toEpochDay();
 		}
 
@@ -92,7 +92,7 @@ public interface JSONValueMapper<T, R> {
 	public static class LocalTime implements JSONValueMapper<java.time.LocalTime, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.LocalTime value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.LocalTime value) throws Exception {
 			return value.toNanoOfDay();
 		}
 
@@ -109,7 +109,7 @@ public interface JSONValueMapper<T, R> {
 	public static class LocalDateTime implements JSONValueMapper<java.time.LocalDateTime, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.LocalDateTime value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.LocalDateTime value) throws Exception {
 			return value.toInstant(ZoneOffset.UTC).toEpochMilli();
 		}
 
@@ -126,7 +126,7 @@ public interface JSONValueMapper<T, R> {
 	public static class ZonedDateTime implements JSONValueMapper<java.time.ZonedDateTime, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.ZonedDateTime value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.ZonedDateTime value) throws Exception {
 			return value.toInstant().toEpochMilli();
 		}
 
@@ -143,7 +143,7 @@ public interface JSONValueMapper<T, R> {
 	public static class OffsetDateTime implements JSONValueMapper<java.time.OffsetDateTime, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.OffsetDateTime value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.OffsetDateTime value) throws Exception {
 			return value.toInstant().toEpochMilli();
 		}
 
@@ -160,7 +160,7 @@ public interface JSONValueMapper<T, R> {
 	public static class Instant implements JSONValueMapper<java.time.Instant, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.Instant value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.Instant value) throws Exception {
 			return value.toEpochMilli();
 		}
 
@@ -177,13 +177,54 @@ public interface JSONValueMapper<T, R> {
 	public static class Duration implements JSONValueMapper<java.time.Duration, Number> {
 
 		@Override
-		public Long toJSONObject(java.time.Duration value) throws Exception {
+		public java.lang.Long toJSONObject(java.time.Duration value) throws Exception {
 			return value.toMillis();
 		}
 
 		@Override
 		public java.time.Duration fromJSONObject(Number value) throws Exception {
 			return java.time.Duration.ofMillis(value.longValue());
+		}
+
+	}
+
+	/**
+	 * Mapper for converting number to and from its hexadecimal representation.
+	 */
+	public static interface Hexadecimal<T> extends JSONValueMapper<T, String> {
+
+		/**
+		 * Mapper for converting {@link java.lang.Integer} to and from its hexadecimal representation.
+		 */
+		public static class Integer implements Hexadecimal<java.lang.Integer> {
+
+			@Override
+			public String toJSONObject(java.lang.Integer value) throws Exception {
+				return java.lang.Integer.toHexString(value);
+			}
+
+			@Override
+			public java.lang.Integer fromJSONObject(String value) throws Exception {
+				return java.lang.Integer.parseInt(value, 16);
+			}
+
+		}
+
+		/**
+		 * Mapper for converting {@link java.lang.Long} to and from its hexadecimal representation.
+		 */
+		public static class Long implements Hexadecimal<java.lang.Long> {
+
+			@Override
+			public String toJSONObject(java.lang.Long value) throws Exception {
+				return java.lang.Long.toHexString(value);
+			}
+
+			@Override
+			public java.lang.Long fromJSONObject(String value) throws Exception {
+				return java.lang.Long.parseLong(value, 16);
+			}
+
 		}
 
 	}

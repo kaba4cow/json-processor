@@ -5,6 +5,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Annotation used to mark fields that should be processed during JSON serialization/deserialization. This annotation can only
@@ -35,6 +39,24 @@ public @interface JSONField {
 	 */
 	@SuppressWarnings("rawtypes")
 	public Class<? extends JSONValueMapper> mapper() default JSONValueMapper.Default.class;
+
+	/**
+	 * Specifies an implementation for map fields which is used if the field type is an interface, abstract class or a
+	 * non-static inner class. The implementation must have an accessible no-argument public constructor.
+	 *
+	 * @return the implementation of {@link Map}.
+	 */
+	@SuppressWarnings("rawtypes")
+	public Class<? extends Map> mapImpl() default HashMap.class;
+
+	/**
+	 * Specifies an implementation for collection fields which is used if the field type is an interface, abstract class or a
+	 * non-static inner class. The implementation must have an accessible no-argument public constructor.
+	 *
+	 * @return the implementation of {@link Collection}.
+	 */
+	@SuppressWarnings("rawtypes")
+	public Class<? extends Collection> collectionImpl() default ArrayList.class;
 
 	/**
 	 * Enumeration for specifying how enum fields should be serialized or deserialized.

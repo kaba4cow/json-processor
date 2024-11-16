@@ -187,7 +187,7 @@ public class JSONProcessor {
 			serializedType = serializedObject.getClass();
 			processableFields = getProcessableFields(serializedType);
 			if (processableFields.isEmpty())
-				throw new JSONProcessorException("%s has no mappable fields", serializedType);
+				throw new JSONProcessorException("Class %s has no mappable fields", serializedType.getName());
 			serializedJsonObject = new JSONObject();
 		}
 
@@ -210,13 +210,13 @@ public class JSONProcessor {
 								serializedJsonObject.put(field.name(), serializeObject(value, field));
 								break;
 							default:
-								throw new JSONProcessorException("unreachable: field type %s is not supported", fieldType);
+								throw new JSONProcessorException("Unreachable: field type %s is not supported", fieldType);
 						}
 					}
 				}
 				return serializedJsonObject;
 			} catch (Exception exception) {
-				throw new JSONProcessorException(exception, "could not serialize object of %s", serializedType);
+				throw new JSONProcessorException(exception, "Could not serialize object of class %s", serializedType.getName());
 			}
 		}
 
@@ -230,8 +230,9 @@ public class JSONProcessor {
 							? new Serializer(value).serialize() //
 							: field.mapper().toJSONObject((S) value);
 				} catch (Exception exception) {
-					throw new JSONProcessorException(exception, "could not serialize object of %s using mapper of %s",
-							value.getClass(), field.mapper().getClass());
+					throw new JSONProcessorException(exception,
+							"Could not serialize object of class %s using mapper of class %s", value.getClass().getName(),
+							field.mapper().getClass().getName());
 				}
 		}
 
@@ -243,7 +244,7 @@ public class JSONProcessor {
 				case STRING:
 					return enumeration.toString();
 				default:
-					throw new JSONProcessorException("unreachable: enum type %s is not supported", enumType);
+					throw new JSONProcessorException("Unreachable: enum type %s is not supported", enumType);
 			}
 		}
 
@@ -259,7 +260,7 @@ public class JSONProcessor {
 			JSONObject json = new JSONObject();
 			for (Object key : map.keySet())
 				if (Objects.isNull(key))
-					throw new JSONProcessorException("map key cannot be null");
+					throw new JSONProcessorException("Map key cannot be null");
 				else
 					json.put(//
 							key.toString(), //
@@ -281,11 +282,12 @@ public class JSONProcessor {
 			deserializedType = Objects.requireNonNull(type);
 			processableFields = getProcessableFields(deserializedType);
 			if (processableFields.isEmpty())
-				throw new JSONProcessorException("%s has no mappable fields", deserializedType);
+				throw new JSONProcessorException("Class %s has no mappable fields", deserializedType.getName());
 			try {
-				deserializedObject = deserializedType.getConstructor().newInstance();
+				deserializedObject = deserializedType.newInstance();
 			} catch (Exception exception) {
-				throw new JSONProcessorException(exception, "could not instantiate object of %s", deserializedType);
+				throw new JSONProcessorException(exception, "Could not instantiate object of class %s",
+						deserializedType.getName());
 			}
 		}
 
@@ -295,10 +297,11 @@ public class JSONProcessor {
 					if (deserializedJsonObject.has(field.name()))
 						field.field().set(deserializedObject, deserializeField(field, deserializedJsonObject, field.name()));
 					else if (!field.nullable())
-						throw new JSONProcessorException("field %s cannot be null", field.name());
+						throw new JSONProcessorException("Field %s cannot be null", field.name());
 				return deserializedObject;
 			} catch (Exception exception) {
-				throw new JSONProcessorException(exception, "could not deserialize object of %s", deserializedType);
+				throw new JSONProcessorException(exception, "Could not deserialize object of class %s",
+						deserializedType.getName());
 			}
 		}
 
@@ -312,7 +315,7 @@ public class JSONProcessor {
 				case OBJECT:
 					return deserializeObject(field, field.type(), json, name);
 				default:
-					throw new JSONProcessorException("unreachable: field type %s is not supported", fieldType);
+					throw new JSONProcessorException("Unreachable: field type %s is not supported", fieldType);
 			}
 		}
 
@@ -387,8 +390,9 @@ public class JSONProcessor {
 				try {
 					return mapper.fromJSONObject((R) value);
 				} catch (Exception exception) {
-					throw new JSONProcessorException(exception, "could not deserialize object of %s using mapper of %s", type,
-							mapper.getClass());
+					throw new JSONProcessorException(exception,
+							"Could not deserialize object of class %s using mapper of class %s", type.getName(),
+							mapper.getClass().getName());
 				}
 		}
 
@@ -400,24 +404,46 @@ public class JSONProcessor {
 				case STRING:
 					return Enum.valueOf(type, value.toString());
 				default:
-					throw new JSONProcessorException("unreachable: enum type %s is not supported", enumType);
+					throw new JSONProcessorException("Unreachable: enum type %s is not supported", enumType);
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		private Collection<Object> deserializeCollection(FieldData<?, ?> field, JSONArray json) throws JSONProcessorException {
 			Class<?> type = field.parameterizedTypes()[0];
-			Collection<Object> collection = new ArrayList<>();
-			for (int i = 0; i < json.length(); i++)
-				collection.add(deserializeObject(field, type, json, i));
-			return collection;
+			try {
+				Collection<Object> collection = isClassInstantiable(field.type())//
+						? (Collection<Object>) field.type().newInstance()//
+						: field.annotation.collectionImpl().newInstance();
+				for (int i = 0; i < json.length(); i++)
+					collection.add(deserializeObject(field, type, json, i));
+				return collection;
+			} catch (Exception exception) {
+				throw new JSONProcessorException(exception, "Could not instantiate collection of class %s",
+						field.annotation.collectionImpl().getName());
+			}
 		}
 
+		@SuppressWarnings("unchecked")
 		private Map<?, ?> deserializeMap(FieldData<?, ?> field, JSONObject json) throws JSONProcessorException {
 			Class<?>[] types = field.parameterizedTypes();
-			Map<Object, Object> map = new HashMap<>();
-			for (String name : json.keySet())
-				map.put(name, deserializeObject(field, types[1], json, name));
-			return map;
+			try {
+				Map<Object, Object> map = isClassInstantiable(field.type())//
+						? (Map<Object, Object>) field.type().newInstance()//
+						: field.annotation.mapImpl().newInstance();
+				for (String name : json.keySet())
+					map.put(name, deserializeObject(field, types[1], json, name));
+				return map;
+			} catch (Exception exception) {
+				throw new JSONProcessorException(exception, "Could not instantiate map of class %s",
+						field.annotation.collectionImpl().getName());
+			}
+		}
+
+		private boolean isClassInstantiable(Class<?> type) {
+			return !type.isInterface()//
+					&& !Modifier.isAbstract(type.getModifiers())//
+					&& !(type.isMemberClass() && !Modifier.isStatic(type.getModifiers()));
 		}
 
 	}
@@ -438,16 +464,16 @@ public class JSONProcessor {
 			this.field = field;
 			this.annotation = annotation;
 			try {
-				this.mapper = annotation.mapper().getConstructor().newInstance();
+				this.mapper = annotation.mapper().newInstance();
 			} catch (Exception exception) {
-				throw new JSONProcessorException(exception, "could not instantiate field mapper %s for field %s",
+				throw new JSONProcessorException(exception, "Could not instantiate field mapper %s for field %s",
 						annotation.mapper(), field.getName());
 			}
 		}
 
 		private static void fieldValidationException(Field field, String cause) throws JSONProcessorException {
-			throw new JSONProcessorException("field %s in %s is %s and cannot be processed", field.getName(),
-					field.getDeclaringClass(), cause);
+			throw new JSONProcessorException("Field %s in class %s is %s and cannot be processed", field.getName(),
+					field.getDeclaringClass().getName(), cause);
 		}
 
 		public Class<?>[] parameterizedTypes() {

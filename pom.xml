@@ -7,7 +7,7 @@
 	<name>JSON Processor</name>
 	<description>A Java library for conversion between Java objects and JSON
 		with support for custom value mappers</description>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<packaging>jar</packaging>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>

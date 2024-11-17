@@ -15,6 +15,7 @@ The **JSON Processor** library provides a simple and flexible way to convert **J
   - `Hexadecimal.Integer`
   - `Hexadecimal.Long`
 - `JSONTools` utility class for manual conversion between **Java** objects and **JSON** data and iterating over `JSONObject` and `JSONArray`
+- `JSONReader` utility class for reading **JSON** data from various data sources
 
 ## Usage
 

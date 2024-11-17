@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -281,6 +282,21 @@ public class JSONTools {
 	}
 
 	/**
+	 * Iterates over a JSONArray, applying a value extractor function and executing the specified action for each value and its
+	 * index in the JSONArray.
+	 *
+	 * @param <E>          the type of the extracted values
+	 * @param json         the JSONArray to iterate over
+	 * @param jsonFunction a function to extract values from the JSONArray
+	 * @param action       a consumer to process each extracted value and its index
+	 */
+	public static <E> void forEach(JSONArray json, BiFunction<JSONArray, Integer, E> jsonFunction,
+			BiConsumer<Integer, E> action) {
+		for (int i = 0; i < json.length(); i++)
+			action.accept(i, jsonFunction.apply(json, i));
+	}
+
+	/**
 	 * Iterates over a JSONObject, applying a value extractor function and executing the specified action for each value.
 	 *
 	 * @param <E>          the type of the extracted values
@@ -291,6 +307,21 @@ public class JSONTools {
 	public static <E> void forEach(JSONObject json, BiFunction<JSONObject, String, E> jsonFunction, Consumer<E> action) {
 		for (String key : json.keySet())
 			action.accept(jsonFunction.apply(json, key));
+	}
+
+	/**
+	 * Iterates over a JSONObject, applying a value extractor function and executing the specified action for each value and its
+	 * key in the JSONObject.
+	 *
+	 * @param <E>          the type of the extracted values
+	 * @param json         the JSONObject to iterate over
+	 * @param jsonFunction a function to extract values from the JSONObject
+	 * @param action       a consumer to process each extracted value and its key
+	 */
+	public static <E> void forEach(JSONObject json, BiFunction<JSONObject, String, E> jsonFunction,
+			BiConsumer<String, E> action) {
+		for (String key : json.keySet())
+			action.accept(key, jsonFunction.apply(json, key));
 	}
 
 }

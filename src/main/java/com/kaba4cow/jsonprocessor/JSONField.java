@@ -58,21 +58,4 @@ public @interface JSONField {
 	@SuppressWarnings("rawtypes")
 	public Class<? extends Collection> collectionImpl() default ArrayList.class;
 
-	/**
-	 * Enumeration for specifying how enum fields should be serialized or deserialized.
-	 */
-	public static enum EnumType {
-
-		/**
-		 * Serialize or deserialize enum fields as their string names.
-		 */
-		STRING,
-
-		/**
-		 * Serialize or deserialize enum fields as their ordinal values.
-		 */
-		ORDINAL;
-
-	}
-
 }

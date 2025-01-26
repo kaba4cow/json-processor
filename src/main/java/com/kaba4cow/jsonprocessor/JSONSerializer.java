@@ -93,7 +93,7 @@ public class JSONSerializer {
 			serializedType = serializedObject.getClass();
 			processableFields = ProcessingHelper.getProcessableFields(serializedType);
 			if (processableFields.isEmpty())
-				throw new JSONProcessorException("Class %s has no mappable fields", serializedType.getName());
+				throw new JSONProcessorException("Class %s has no processable fields", serializedType.getName());
 			serializedJsonObject = new JSONObject();
 		}
 

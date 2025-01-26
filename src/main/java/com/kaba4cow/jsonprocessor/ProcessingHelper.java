@@ -34,20 +34,20 @@ class ProcessingHelper {
 		return !getProcessableFields(type).isEmpty();
 	}
 
-	public static enum FieldType {
+	static enum FieldType {
 
 		OBJECT, COLLECTION, MAP;
 
 	}
 
-	public static class FieldData<T, R> {
+	static class FieldData<T, R> {
 
 		private final Field field;
 		private final JSONField annotation;
 		private final JSONValueMapper<T, R> mapper;
 
 		@SuppressWarnings("unchecked")
-		public FieldData(Field field, JSONField annotation) throws JSONProcessorException {
+		FieldData(Field field, JSONField annotation) throws JSONProcessorException {
 			field.setAccessible(true);
 			if (Modifier.isStatic(field.getModifiers()))
 				fieldValidationException(field, "static");
@@ -68,7 +68,7 @@ class ProcessingHelper {
 					field.getDeclaringClass().getName(), cause);
 		}
 
-		public Class<?>[] parameterizedTypes() {
+		Class<?>[] parameterizedTypes() {
 			ParameterizedType type = (ParameterizedType) field.getGenericType();
 			Class<?>[] types = new Class<?>[type.getActualTypeArguments().length];
 			for (int i = 0; i < types.length; i++)
@@ -76,37 +76,37 @@ class ProcessingHelper {
 			return types;
 		}
 
-		public Field field() {
+		Field field() {
 			return field;
 		}
 
-		public Class<?> type() {
+		Class<?> type() {
 			return field.getType();
 		}
 
-		public String name() {
+		String name() {
 			return field.getName();
 		}
 
-		public boolean nullable() {
+		boolean nullable() {
 			return annotation.nullable();
 		}
 
-		public EnumType enumType() {
+		EnumType enumType() {
 			return annotation.enumType();
 		}
 
 		@SuppressWarnings("rawtypes")
-		public Class<? extends Map> mapImpl() {
+		Class<? extends Map> mapImpl() {
 			return annotation.mapImpl();
 		}
 
 		@SuppressWarnings("rawtypes")
-		public Class<? extends Collection> collectionImpl() {
+		Class<? extends Collection> collectionImpl() {
 			return annotation.collectionImpl();
 		}
 
-		public JSONValueMapper<T, R> mapper() {
+		JSONValueMapper<T, R> mapper() {
 			return mapper;
 		}
 

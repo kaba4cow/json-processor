@@ -102,7 +102,7 @@ public class JSONDeserializer {
 			deserializedType = Objects.requireNonNull(type);
 			processableFields = ProcessingHelper.getProcessableFields(deserializedType);
 			if (processableFields.isEmpty())
-				throw new JSONProcessorException("Class %s has no mappable fields", deserializedType.getName());
+				throw new JSONProcessorException("Class %s has no processable fields", deserializedType.getName());
 			try {
 				deserializedObject = deserializedType.newInstance();
 			} catch (Exception exception) {

@@ -165,7 +165,7 @@ public class JSONDeserializer {
 			else if (JSONArray.class.equals(type))
 				return json.getJSONArray(name);
 			else if (type.isEnum())
-				return deserializeEnum(type.asSubclass(Enum.class), json.get(name), field.enumType());
+				return deserializeEnum(type.asSubclass(Enum.class), json.get(name), field.enumFormat());
 			else
 				return deserializeObject(type, json.get(name), field.mapper());
 		}
@@ -196,7 +196,7 @@ public class JSONDeserializer {
 			else if (JSONArray.class.equals(type))
 				return json.getJSONArray(index);
 			else if (type.isEnum())
-				return deserializeEnum(type.asSubclass(Enum.class), json.get(index), field.enumType());
+				return deserializeEnum(type.asSubclass(Enum.class), json.get(index), field.enumFormat());
 			else
 				return deserializeObject(type, json.get(index), field.mapper());
 		}
@@ -216,15 +216,15 @@ public class JSONDeserializer {
 				}
 		}
 
-		private <E extends Enum<E>> E deserializeEnum(Class<E> type, Object value, EnumType enumType)
+		private <E extends Enum<E>> E deserializeEnum(Class<E> type, Object value, EnumFormat enumFormat)
 				throws JSONProcessorException {
-			switch (enumType) {
+			switch (enumFormat) {
 				case ORDINAL:
 					return type.getEnumConstants()[Integer.parseInt(value.toString())];
 				case STRING:
 					return Enum.valueOf(type, value.toString());
 				default:
-					throw new JSONProcessorException("Unreachable: enum type %s is not supported", enumType);
+					throw new JSONProcessorException("Unreachable: enum type %s is not supported", enumFormat);
 			}
 		}
 

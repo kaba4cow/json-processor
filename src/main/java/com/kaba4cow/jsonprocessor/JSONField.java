@@ -28,9 +28,9 @@ public @interface JSONField {
 	/**
 	 * Defines how enum fields should be serialized or deserialized.
 	 *
-	 * @return the {@link EnumType} to use for processing enum fields
+	 * @return the {@link EnumFormat} to use for processing enum fields
 	 */
-	public EnumType enumType() default EnumType.STRING;
+	public EnumFormat enumFormat() default EnumFormat.STRING;
 
 	/**
 	 * Specifies a custom {@link JSONValueMapper} to use for this field during serialization and deserialization.

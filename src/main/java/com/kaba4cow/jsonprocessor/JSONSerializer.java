@@ -129,7 +129,7 @@ public class JSONSerializer {
 		@SuppressWarnings("unchecked")
 		private <S, D> Object serializeObject(Object value, FieldData<S, D> field) throws JSONProcessorException {
 			if (value.getClass().isEnum())
-				return serializeEnum(value, field.enumType());
+				return serializeEnum(value, field.enumFormat());
 			else
 				try {
 					return ProcessingHelper.hasProcessableFields(value.getClass()) //
@@ -142,15 +142,15 @@ public class JSONSerializer {
 				}
 		}
 
-		private Object serializeEnum(Object value, EnumType enumType) throws JSONProcessorException {
+		private Object serializeEnum(Object value, EnumFormat enumFormat) throws JSONProcessorException {
 			Enum<?> enumeration = (Enum<?>) value;
-			switch (enumType) {
+			switch (enumFormat) {
 				case ORDINAL:
 					return enumeration.ordinal();
 				case STRING:
 					return enumeration.toString();
 				default:
-					throw new JSONProcessorException("Unreachable: enum type %s is not supported", enumType);
+					throw new JSONProcessorException("Unreachable: enum format %s is not supported", enumFormat);
 			}
 		}
 

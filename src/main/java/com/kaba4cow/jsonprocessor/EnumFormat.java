@@ -3,7 +3,7 @@ package com.kaba4cow.jsonprocessor;
 /**
  * Enumeration for specifying how enum fields should be serialized or deserialized.
  */
-public enum EnumType {
+public enum EnumFormat {
 
 	/**
 	 * Serialize or deserialize enum fields as their string names.

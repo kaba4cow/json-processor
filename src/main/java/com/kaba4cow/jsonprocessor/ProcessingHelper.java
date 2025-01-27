@@ -92,8 +92,8 @@ class ProcessingHelper {
 			return annotation.nullable();
 		}
 
-		EnumType enumType() {
-			return annotation.enumType();
+		EnumFormat enumFormat() {
+			return annotation.enumFormat();
 		}
 
 		@SuppressWarnings("rawtypes")
